@@ -6,8 +6,8 @@ exports.addAddressController = async (req, res) => {
     const userID = req.user.id;
     const addressData = req.body
     const name = req.user.username
-    // const email = req.user.email
-    console.log(name);
+    // const email = req.user.emaill
+    // console.log(name);
 
     try {
         const existingAddress = await address.findOne({ userID })
