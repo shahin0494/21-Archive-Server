@@ -6,16 +6,19 @@ exports.addAddressController = async (req, res) => {
     const userID = req.user.id;
     const addressData = req.body
     const name = req.user.username
+    // const email = req.user.email
     console.log(name);
 
     try {
-        if (addressData.isDefault) {
-            await address.updateMany({ userID }, { $set: { isDefault: false } })
+        const existingAddress = await address.findOne({ userID })
+        if (existingAddress) {
+            return res.status(400).json("Address already addedd")
         }
         const newAdress = new address({
-            ...addressData, name: name, userID
+            ...addressData, name: name, userID, isDefault: true
         })
         await newAdress.save()
+
         res.status(200).json(newAdress)
     } catch (error) {
         res.status(500).json(error);
@@ -23,3 +26,29 @@ exports.addAddressController = async (req, res) => {
     }
 }
 
+// get all address
+exports.getAllAddressController = async (req, res) => {
+    console.log("inside get all address controller");
+    try {
+        const allAddress = await address.find()
+        res.status(200).json(allAddress)
+    } catch (error) {
+        res.status(500).json(error)
+    }
+}
+
+// update adress
+exports.updateAddressControllwe = async (req, res) => {
+    console.log("inside update address controlelr");
+    const { id } = req.params
+    const { street, city, state, landmark, pincode, country } = req.body
+    try {
+        const updateAddress = await address.findByIdAndUpdate({ _id: id }, { street, city, state, landmark, pincode, country }, { new: true })
+        await updateAddress.save()
+        res.status(200).json(updateAddress)
+    } catch (error) {
+        res.status(500).json(error)
+        console.log(error);
+
+    }
+}
