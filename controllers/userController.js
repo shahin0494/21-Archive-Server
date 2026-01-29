@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken")
 
 
 
-// refister controller
+// register controller
 exports.registerController = async (req, res) => {
     console.log("inside register controller");
     const { username, email, password } = req.body
@@ -36,14 +36,14 @@ exports.loginController = async (req, res) => {
     try {
         const existingUser = await users.findOne({ email })
         console.log(existingUser);
-        
 
+        
         if (existingUser) {
             let isUserLoggedIN = existingUser.role == "user" ? await bcrypt.compare(password, existingUser.password) : password == existingUser.password
             // console.log(isUserLoggedIN);
 
             if (isUserLoggedIN) {
-                const token = jwt.sign({ email, role: existingUser.role, id: existingUser._id,username:existingUser.username}, process.env.JWTSECRETKEY)
+                const token = jwt.sign({ email, role: existingUser.role, id: existingUser._id, username: existingUser.username }, process.env.JWTSECRETKEY)
                 res.status(200).json({ user: existingUser, token })
             } else {
                 res.status(500).json("invalid username/paswwrd")
