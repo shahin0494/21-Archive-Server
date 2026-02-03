@@ -6,6 +6,7 @@ const jwtMiddleware = require("../middlewares/jwtMiddleware")
 const sneakerController = require("../controllers/sneakerController")
 const upload = require("../middlewares/imageMiddleware")
 const adminMiddleware = require("../middlewares/adminMiddleware")
+const wishlistController = require("../controllers/wishlistController")
 
 // register user
 routes.post("/register", userController.registerController)
@@ -34,5 +35,16 @@ routes.get("/allSneakers",adminMiddleware,sneakerController.getAllSneakersContro
 
 // get single sneaker
 routes.get("/sneaker/:id/view",adminMiddleware,sneakerController.getSingleSneakerController)
+
+// ------------- WISHLISt SECTION -------------------------------------
+
+// add to wishlist
+routes.post("/wishlist/:id/add",jwtMiddleware,wishlistController.addToWishlistController)
+
+// view all added
+routes.get("/wishlists",jwtMiddleware,wishlistController.getAllWishlistsController)
+
+// delete recipe
+routes.delete("/wishlist/:id/delete",jwtMiddleware,wishlistController.deleteWishlistController)
 
 module.exports = routes 
