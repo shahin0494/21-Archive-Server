@@ -7,6 +7,8 @@ const sneakerController = require("../controllers/sneakerController")
 const upload = require("../middlewares/imageMiddleware")
 const adminMiddleware = require("../middlewares/adminMiddleware")
 const wishlistController = require("../controllers/wishlistController")
+const cartController = require("../controllers/cartController")
+const { createPaymentController, stripeWebhookController } = require("../controllers/paymentController")
 
 // register user
 routes.post("/register", userController.registerController)
@@ -20,31 +22,47 @@ routes.post("/login", userController.loginController)
 routes.post("/addaddress", jwtMiddleware, addressController.addAddressController);
 
 // get all address
-routes.get("/allAddress", jwtMiddleware,addressController.getAllAddressController)
+routes.get("/allAddress", jwtMiddleware, addressController.getAllAddressController)
 
 // update address
-routes.put("/address/:id", jwtMiddleware,addressController.updateAddressControllwe)
+routes.put("/address/:id", jwtMiddleware, addressController.updateAddressControllwe)
 
 // ------------- SNEAKER SECTION -------------------------------------
 
 // add sneakers
-routes.post("/addSneakers", adminMiddleware,upload.array("photos", 5), sneakerController.addSneakerController)
+routes.post("/addSneakers", adminMiddleware, upload.array("photos", 5), sneakerController.addSneakerController)
 
 // get all sneakers
-routes.get("/allSneakers",adminMiddleware,sneakerController.getAllSneakersController)
+routes.get("/allSneakers", adminMiddleware, sneakerController.getAllSneakersController)
 
 // get single sneaker
-routes.get("/sneaker/:id/view",adminMiddleware,sneakerController.getSingleSneakerController)
+routes.get("/sneaker/:id/view", adminMiddleware, sneakerController.getSingleSneakerController)
 
 // ------------- WISHLISt SECTION -------------------------------------
 
 // add to wishlist
-routes.post("/wishlist/:id/add",jwtMiddleware,wishlistController.addToWishlistController)
+routes.post("/wishlist/:id/add", jwtMiddleware, wishlistController.addToWishlistController)
 
 // view all added
-routes.get("/wishlists",jwtMiddleware,wishlistController.getAllWishlistsController)
+routes.get("/wishlists", jwtMiddleware, wishlistController.getAllWishlistsController)
 
 // delete recipe
-routes.delete("/wishlist/:id/delete",jwtMiddleware,wishlistController.deleteWishlistController)
+routes.delete("/wishlist/:id/delete", jwtMiddleware, wishlistController.deleteWishlistController)
+
+// ------------- CART SECTION -------------------------------------
+
+// add to cart
+routes.post("/cart/:id/add", jwtMiddleware, cartController.addToCartController)
+
+// create order
+routes.post("/order/create", jwtMiddleware, cartController.createOrderController)
+
+// ------------- PAYMENT SECTION -------------------------------------
+
+// make payment
+routes.post("/stripe/create", jwtMiddleware, createPaymentController)
+
+// check payment
+routes.post("/stripe/webhook", stripeWebhookController)
 
 module.exports = routes 

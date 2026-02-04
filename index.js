@@ -6,15 +6,21 @@ const routes = require('./routes/routes')
 
 const archiveServer = express()
 archiveServer.use(cors())
+
+archiveServer.use(
+    "/stripe/webhook",
+    express.raw({ type: "application/json" })
+)
+
 archiveServer.use(express.json())
 archiveServer.use(routes)
 
 const PORT = 3000
 
-archiveServer.listen(PORT,()=>{
+archiveServer.listen(PORT, () => {
     console.log("server strted");
 })
 
-archiveServer.get("/",(req,res)=>{
+archiveServer.get("/", (req, res) => {
     res.status(200).send("<h1>Cookpedia server started</h1>")
 })
