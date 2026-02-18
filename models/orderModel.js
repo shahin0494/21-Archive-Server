@@ -14,7 +14,7 @@ const orderSchema = new mongoose.Schema({
             },
             sneakerName: String,
             brand: String,
-            Size: Number,
+            size: Number,
             quantity: Number,
             price: Number,
             totalPrice: Number

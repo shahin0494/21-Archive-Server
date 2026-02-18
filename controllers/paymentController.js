@@ -11,14 +11,14 @@ exports.createPaymentController = async (req, res) => {
     try {
         const orderId = req.body?.orderId
         if (!orderId) {
-          return res.status(400).json("orderId is required");
+            return res.status(400).json("orderId is required");
         }
         const order = await orders.findById(orderId)
         if (!order) {
-            res.status(404).json("order not found")
+            return res.status(404).json("order not found");
         }
-        if (order.paymentStatus == "paid") {
-            res.status(400).json("Order already paid")
+        if (order.paymentStatus === "paid") {
+            return res.status(400).json("Order already paid");
         }
         const payment = await stripe.paymentIntents.create({
             amount: order.orderTotal * 100,
@@ -47,7 +47,7 @@ exports.stripeWebhookController = async (req, res) => {
         event = stripe.webhooks.constructEvent(
             req.body,
             sig,
-            process.env.STRIPE_WEBHOOK_KEY
+            process.env.STRIPE_WEBHOOK_SECRET
         );
 
     } catch (err) {
@@ -57,6 +57,7 @@ exports.stripeWebhookController = async (req, res) => {
     // succdss
     if (event.type === "payment_intent.succeeded") {
         const paymentIntent = event.data.object
+        console.log("METADATA:", paymentIntent.metadata);  // 👈 ADD HERE
         const orderId = paymentIntent.metadata.orderId;
         const order = await orders.findById(orderId)
         if (!order) { return res.status(404).end(); }

@@ -12,12 +12,12 @@ exports.addToCartController = async (req, res) => {
         // product availbity
         const products = await sneakers.findById(id)
         if (!products) {
-            res.status(404).json("SNEAKER NOT FOUND")
+            return res.status(404).json("SNEAKER NOT FOUND");
         }
         // size availability
         const sizeData = products.sizes.find(s => s.size == size)
         if (!sizeData) {
-            res.status(400).json("SIZE UNAVAILABLE")
+            return res.status(400).json("SIZE UNAVAILABLE");
         }
         //quantiy check
         const existingCartItem = await carts.findOne({ userID, sneakerID: id, size })
@@ -27,7 +27,7 @@ exports.addToCartController = async (req, res) => {
                 return res.status(400).json("Not enough stock available");
             }
             existingCartItem.quantity = newQuantity
-            existingCartItem.price = newQuantity * existingCartItem.price
+            existingCartItem.totalPrice = newQuantity * existingCartItem.price
             await existingCartItem.save()
             return res.status(200).json(existingCartItem);
         }
@@ -68,9 +68,14 @@ exports.createOrderController = async (req, res) => {
         const orderItems = []
         for (let item of cartItem) {
             const product = await sneakers.findById(item.sneakerID)
+            if (!product) {
+                return res.status(404).json("Product not found while creating order");
+            }
             const sizeData = product.sizes.find(s => s.size == item.size)
             if (!sizeData || sizeData.stock < item.quantity) {
-                res.status(409).json(`${product.sneakerName} (Size ${item.size}) is out of stock`)
+                return res.status(409).json(
+                    `${product.sneakerName} (Size ${item.size}) is out of stock`
+                );
             }
 
             orderTotal += item.totalPrice

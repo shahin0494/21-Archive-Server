@@ -9,6 +9,7 @@ const adminMiddleware = require("../middlewares/adminMiddleware")
 const wishlistController = require("../controllers/wishlistController")
 const cartController = require("../controllers/cartController")
 const { createPaymentController, stripeWebhookController } = require("../controllers/paymentController")
+const orderController = require("../controllers/orderController")
 
 // register user
 routes.post("/register", userController.registerController)
@@ -49,6 +50,9 @@ routes.get("/wishlists", jwtMiddleware, wishlistController.getAllWishlistsContro
 // delete recipe
 routes.delete("/wishlist/:id/delete", jwtMiddleware, wishlistController.deleteWishlistController)
 
+// add to cart
+routes.post("/wishlist/:id/add-to-cart", jwtMiddleware, wishlistController.addToWishlistController);
+
 // ------------- CART SECTION -------------------------------------
 
 // add to cart
@@ -64,5 +68,13 @@ routes.post("/stripe/create", jwtMiddleware, createPaymentController)
 
 // check payment
 routes.post("/stripe/webhook", stripeWebhookController)
+
+// ------------- ORDER SECTION -------------------------------------
+
+// get all orders
+routes.get("/orders", jwtMiddleware, orderController.getMyOrdersController)
+
+// get single order details
+routes.get("/orders/:id/view", jwtMiddleware, orderController.getSingleOrderController)
 
 module.exports = routes 
