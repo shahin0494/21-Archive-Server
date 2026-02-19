@@ -30,7 +30,10 @@ const wishlistSchema = new mongoose.Schema({
             },
             message: "Max 5 photos"
         }
-    }
+    },
+    size: {
+        type: Number,
+        required: true}
 })
 
 const wishlists = mongoose.model("wishlists", wishlistSchema)

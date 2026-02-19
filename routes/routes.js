@@ -51,7 +51,7 @@ routes.get("/wishlists", jwtMiddleware, wishlistController.getAllWishlistsContro
 routes.delete("/wishlist/:id/delete", jwtMiddleware, wishlistController.deleteWishlistController)
 
 // add to cart
-routes.post("/wishlist/:id/add-to-cart", jwtMiddleware, wishlistController.addToWishlistController);
+routes.post("/wishlist/:id/cart", jwtMiddleware, wishlistController.moveWishlistToCartController);
 
 // ------------- CART SECTION -------------------------------------
 
