@@ -34,10 +34,10 @@ routes.put("/address/:id", jwtMiddleware, addressController.updateAddressControl
 routes.post("/addSneakers", adminMiddleware, upload.array("photos", 5), sneakerController.addSneakerController)
 
 // get all sneakers
-routes.get("/allSneakers", adminMiddleware, sneakerController.getAllSneakersController)
+routes.get("/allSneakers", jwtMiddleware, sneakerController.getAllSneakersController)
 
 // get single sneaker
-routes.get("/sneaker/:id/view", adminMiddleware, sneakerController.getSingleSneakerController)
+routes.get("/sneakers/:id/view", jwtMiddleware,sneakerController.getSingleSneakerController)
 
 // ------------- WISHLISt SECTION -------------------------------------
 
