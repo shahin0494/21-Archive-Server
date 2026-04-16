@@ -37,7 +37,7 @@ routes.post("/addSneakers", adminMiddleware, upload.array("photos", 5), sneakerC
 routes.get("/allSneakers", jwtMiddleware, sneakerController.getAllSneakersController)
 
 // get single sneaker
-routes.get("/sneakers/:id/view", jwtMiddleware,sneakerController.getSingleSneakerController)
+routes.get("/sneakers/:id/view", jwtMiddleware, sneakerController.getSingleSneakerController)
 
 // ------------- WISHLISt SECTION -------------------------------------
 
@@ -57,6 +57,13 @@ routes.post("/wishlist/:id/cart", jwtMiddleware, wishlistController.moveWishlist
 
 // add to cart
 routes.post("/cart/:id/add", jwtMiddleware, cartController.addToCartController)
+
+// delete from cart
+routes.delete("/cart/:id/delete", jwtMiddleware, cartController.deleteCartController)
+
+// view all added
+routes.get("/cart", jwtMiddleware, cartController.getAllCartController)
+
 
 // create order
 routes.post("/order/create", jwtMiddleware, cartController.createOrderController)

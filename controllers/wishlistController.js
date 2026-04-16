@@ -5,40 +5,61 @@ const carts = require("../models/cart");
 // add to wishlist
 exports.addToWishlistController = async (req, res) => {
     console.log("inside add to wishlist controller");
-    const { id } = req.params
-    console.log("Product ID received:", id);
+
+    const { id } = req.params;
+    const { size } = req.body; // ✅ ADD THIS
+    const userid = req.user.id;
+
+    console.log("Product ID:", id);
+    console.log("User ID:", userid);
+    console.log("Size:", size);
+
+    if (!size) {
+        return res.status(400).json("Size is required");
+    }
 
     const mongoose = require("mongoose");
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json("Invalid product ID");
     }
-    const userid = req.user.id
-    console.log(userid)
-
 
     try {
-        const products = await sneakers.findById(id)
+        const products = await sneakers.findById(id);
+
         if (!products) {
             return res.status(404).json("Product not found");
         }
-        const { sneakerName, brand, price, photos } = products
-        const existingWishlist = await wishlists.findOne({ sneakerID: id, userID: userid })
+
+        const { sneakerName, brand, price, photos } = products;
+
+        const existingWishlist = await wishlists.findOne({
+            sneakerID: id,
+            userID: userid,
+            size // ✅ optional but recommended (prevents duplicate same size)
+        });
+
         if (!existingWishlist) {
             const newWishlist = new wishlists({
-                sneakerID: id, userID: userid, sneakerName, brand, price, photos
-            })
-            await newWishlist.save()
-            res.status(200).json(newWishlist)
+                sneakerID: id,
+                userID: userid,
+                sneakerName,
+                brand,
+                price,
+                photos,
+                size // ✅ ADD THIS
+            });
+
+            await newWishlist.save();
+            res.status(200).json(newWishlist);
         } else {
-
-            res.status(409).json("Product Already Added")
+            res.status(409).json("Product Already Added");
         }
-    } catch (error) {
-        res.status(500).json(error)
-        console.log(error);
 
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
     }
-}
+};
 
 // get all wihslists
 exports.getAllWishlistsController = async (req, res) => {
@@ -56,20 +77,18 @@ exports.getAllWishlistsController = async (req, res) => {
 }
 
 // delete wishlist
-exports.deleteWishlistController = async (req,res)=>{
+exports.deleteWishlistController = async (req, res) => {
     console.log("inside delete wishlist controller");
-    const {id} = req.params
+    const { id } = req.params
     try {
-        const deleteWishlist = await wishlists.findByIdAndDelete({_id:id})
-         res.status(200).json(deleteWishlist)
+        const deleteWishlist = await wishlists.findByIdAndDelete({ _id: id })
+        res.status(200).json(deleteWishlist)
     } catch (error) {
-         res.status(500).json(error)
+        res.status(500).json(error)
     }
 }
 
 // Move wishlist item to cart
-
-
 exports.moveWishlistToCartController = async (req, res) => {
     console.log("inside move wishlist to cart controller");
 
@@ -108,7 +127,7 @@ exports.moveWishlistToCartController = async (req, res) => {
             price: wishlistItem.price,
             photos: wishlistItem.photos,
             quantity: 1,
-            size:wishlistItem.size,
+            size: wishlistItem.size,
             totalPrice: wishlistItem.price * 1
         });
 

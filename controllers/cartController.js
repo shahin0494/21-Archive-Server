@@ -105,3 +105,30 @@ exports.createOrderController = async (req, res) => {
         res.status(500).json("Server error");
     }
 }
+
+// get all caet
+exports.getAllCartController = async (req, res) => {
+    console.log("inside get all cart controller");
+    const userid = req.user.id
+    try {
+        const products = await carts.find({ userID: userid })
+        res.status(200).json(products)
+        console.log(products);
+
+    } catch (error) {
+        res.status(500).json(error)
+        console.log(error);
+    }
+}
+
+// delete cart
+exports.deleteCartController = async (req, res) => {
+    console.log("inside delete wishlist controller");
+    const { id } = req.params
+    try {
+        const deleteCart = await carts.findByIdAndDelete({ _id: id })
+        res.status(200).json(deleteCart)
+    } catch (error) {
+        res.status(500).json(error)
+    }
+}
