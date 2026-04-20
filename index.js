@@ -4,23 +4,30 @@ const cors = require("cors")
 require("./config/db")
 const routes = require('./routes/routes')
 
+// 👉 1. IMPORT THE WEBHOOK CONTROLLER HERE
+const { stripeWebhookController } = require("./controllers/paymentController")
+
 const archiveServer = express()
 archiveServer.use(cors())
 
-archiveServer.use(
+// 👉 2. USE .post() INSTEAD OF .use(), AND ADD THE CONTROLLER AT THE END
+archiveServer.post(
     "/stripe/webhook",
-    express.raw({ type: "application/json" })
+    express.raw({ type: "application/json" }),
+    stripeWebhookController
 )
 
+// 👉 3. NORMAL JSON PARSER COMES AFTER
 archiveServer.use(express.json())
 archiveServer.use(routes)
 
 const PORT = 3000
 
 archiveServer.listen(PORT, () => {
-    console.log("server strted");
+    console.log("Archive server started on port", PORT);
 })
 
 archiveServer.get("/", (req, res) => {
-    res.status(200).send("<h1>Cookpedia server started</h1>")
+    // Updated this from Cookpedia to match your current project vibe
+    res.status(200).send("<h1>21 Archive Server Started</h1>") 
 })

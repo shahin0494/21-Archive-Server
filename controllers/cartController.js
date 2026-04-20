@@ -1,6 +1,7 @@
 const carts = require("../models/cart");
 const orders = require("../models/orderModel");
 const sneakers = require("../models/sneakerModel");
+const address = require("../models/addressModel");
 
 // add to cart
 exports.addToCartController = async (req, res) => {
@@ -55,15 +56,12 @@ exports.addToCartController = async (req, res) => {
 exports.createOrderController = async (req, res) => {
     console.log("inside create order controller");
     try {
-
-        // get cart items
         const userID = req.user.id
         const cartItem = await carts.find({ userID })
         if (cartItem.length === 0) {
             return res.status(400).json("Cart is empty")
         }
 
-        // re check stock
         let orderTotal = 0
         const orderItems = []
         for (let item of cartItem) {
@@ -86,23 +84,37 @@ exports.createOrderController = async (req, res) => {
                 size: item.size,
                 quantity: item.quantity,
                 price: item.price,
-                totalPrice: item.totalPrice
+                totalPrice: item.totalPrice,
+                photos: Array.isArray(item.photos) ? item.photos[0] : item.photos
             })
         }
+
+        // 👈 ADDED: Fetch the user's default address to save a snapshot
+        const userAddress = await address.findOne({ userID });
 
         // create order
         const order = new orders({
             userID,
             items: orderItems,
             orderTotal,
-            paymentStatus: "pending"
+            paymentStatus: "pending",
+            // 👈 ADDED: Save the address snapshot directly into the order
+            shippingAddress: userAddress ? {
+                name: userAddress.name,
+                street: userAddress.street,
+                city: userAddress.city,
+                state: userAddress.state,
+                pincode: userAddress.pincode,
+                country: userAddress.country
+            } : null 
         })
+        
         await order.save()
         res.status(200).json(order)
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json("Server error");
+        console.error("CREATE ORDER CRASH:", error);
+        res.status(500).json(error.message || "Server error");
     }
 }
 

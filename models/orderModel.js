@@ -17,7 +17,8 @@ const orderSchema = new mongoose.Schema({
             size: Number,
             quantity: Number,
             price: Number,
-            totalPrice: Number
+            totalPrice: Number,
+            photos: String // ADDED: So your frontend can display the image in the order history
         }
     ],
     orderTotal: {
@@ -31,11 +32,26 @@ const orderSchema = new mongoose.Schema({
     },
     orderStatus: {
         type: String,
-        enum: ["processing", "shipped", "delivered", "cancelled"],
-        default: "processing"
+        // ADDED "confirmed" so your webhook doesn't crash when updating!
+        enum: ["pending", "confirmed", "processing", "shipped", "delivered", "cancelled"],
+        default: "pending" 
+    },
+    // ADDED: Shipping Address Snapshot
+    shippingAddress: {
+        name: String,
+        street: String,
+        city: String,
+        state: String,
+        pincode: String,
+        country: String
+    },
+    // ADDED: For tracking Stripe payments easily
+    transactionId: {
+        type: String,
+        default: ""
     }
 
 }, { timestamps: true })
 
-const orders = mongoose.model("orders",orderSchema)
+const orders = mongoose.model("orders", orderSchema)
 module.exports = orders

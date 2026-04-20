@@ -75,8 +75,10 @@ exports.stripeWebhookController = async (req, res) => {
 
         // ✅ Update order
         order.paymentStatus = "paid";
-        order.orderStatus = "processing";
+        order.orderStatus = "confirmed"; // 👈 CHANGED: Now matches your new Schema and desired frontend text
+        order.transactionId = paymentIntent.id; // 👈 ADDED: Save the Stripe ID for refunds/tracking
         await order.save();
+
         // 🧹 Clear cart
         await carts.deleteMany({ userID: order.userID });
     }

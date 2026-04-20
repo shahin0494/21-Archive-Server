@@ -34,10 +34,10 @@ routes.put("/address/:id", jwtMiddleware, addressController.updateAddressControl
 routes.post("/addSneakers", adminMiddleware, upload.array("photos", 5), sneakerController.addSneakerController)
 
 // get all sneakers
-routes.get("/allSneakers", jwtMiddleware, sneakerController.getAllSneakersController)
+routes.get("/allSneakers", sneakerController.getAllSneakersController)
 
 // get single sneaker
-routes.get("/sneakers/:id/view", jwtMiddleware, sneakerController.getSingleSneakerController)
+routes.get("/sneakers/:id/view", sneakerController.getSingleSneakerController)
 
 // ------------- WISHLISt SECTION -------------------------------------
 
@@ -74,7 +74,7 @@ routes.post("/order/create", jwtMiddleware, cartController.createOrderController
 routes.post("/stripe/create", jwtMiddleware, createPaymentController)
 
 // check payment
-routes.post("/stripe/webhook", stripeWebhookController)
+// routes.post("/stripe/webhook", stripeWebhookController)
 
 // ------------- ORDER SECTION -------------------------------------
 
