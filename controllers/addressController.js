@@ -29,11 +29,14 @@ exports.addAddressController = async (req, res) => {
 // get all address
 exports.getAllAddressController = async (req, res) => {
     console.log("inside get all address controller");
+
+    const userID = req.user.id;
+
     try {
-        const allAddress = await address.find()
-        res.status(200).json(allAddress)
+        const allAddress = await address.find({ userID });
+        res.status(200).json(allAddress);
     } catch (error) {
-        res.status(500).json(error)
+        res.status(500).json(error);
     }
 }
 
